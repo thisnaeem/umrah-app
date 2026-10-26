@@ -1,7 +1,13 @@
+// LEGACY SHIM — 2026-10-26
+// This file exists only because older folders / GitHub clones still have src/app/map.js
+// alongside src/app/(tabs)/map.js, and Expo Router was rendering THIS file (not the tab one).
+// It is the same fixed MapScreen, with imports adjusted for this location.
+// Clean folders should delete this file and use only src/app/(tabs)/map.js.
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors, fonts } from '../theme';
-import { PLACES_V2, AIRPORT_INFO } from '../data';
+import { PLACES_V2 } from '../serviceData';
+import { AIRPORT_INFO } from '../data';
 
 function Cube({ x, y, w, h, color, topColor }) {
   return (
@@ -18,13 +24,14 @@ export default function MapScreen() {
   const [filter, setFilter] = useState('All');
   const [zoom, setZoom] = useState(1);
   const [night, setNight] = useState(false);
-  const places = PLACES_V2.filter((p) => p.city === city && (filter === 'All' || p.type === filter));
-  const allCity = PLACES_V2.filter((p) => p.city === city);
+  const allPlaces = PLACES_V2 || [];
+  const places = allPlaces.filter((p) => p.city === city && (filter === 'All' || p.type === filter));
+  const allCity = allPlaces.filter((p) => p.city === city);
   const [selected, setSelected] = useState(allCity[0]);
 
   const onCity = (c) => {
     setCity(c);
-    const first = PLACES_V2.find((p) => p.city === c);
+    const first = allPlaces.find((p) => p.city === c);
     setSelected(first);
     setFilter('All');
   };
@@ -36,7 +43,7 @@ export default function MapScreen() {
     <ScrollView style={styles.root} contentContainerStyle={{ paddingBottom: 32 }}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>3D Map — {city}</Text>
-        <Text style={styles.headerSub}>Isometric 3D view • Zoom karein, pin par tap karein, route dekhein</Text>
+        <Text style={styles.headerSub}>Isometric 3D view • Zoom, tap a pin, see the route</Text>
       </View>
 
       <View style={styles.toggleRow}>
@@ -53,7 +60,7 @@ export default function MapScreen() {
       <View style={styles.filterRow}>
         {['All', 'Hotel', 'Masjid', 'Airport', 'Ziyarat'].map((f) => (
           <TouchableOpacity key={f} onPress={() => setFilter(f)} style={[styles.filter, filter === f && styles.filterActive]}>
-            <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>{f === 'All' ? 'Sab' : f}</Text>
+            <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>{f === 'All' ? 'All' : f}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -93,7 +100,7 @@ export default function MapScreen() {
         <Text style={styles.detailText}>{selected.detail}</Text>
       </View>
 
-      <Text style={styles.sectionTitle}>{city} me Places</Text>
+      <Text style={styles.sectionTitle}>{city}  Places</Text>
       {allCity.map((p) => (
         <TouchableOpacity key={p.id} onPress={() => setSelected(p)} style={[styles.listCard, selected.id === p.id && styles.listActive]}>
           <Text style={styles.listName}>{p.name}</Text>
@@ -101,12 +108,12 @@ export default function MapScreen() {
         </TouchableOpacity>
       ))}
 
-      <Text style={styles.sectionTitle}>Safar Route</Text>
+      <Text style={styles.sectionTitle}>Travel Route</Text>
       <View style={styles.routeCard}>
-        <Text style={styles.routeText}>✈️ Jeddah Airport → 🚗 Makkah (75 min, car 300 SAR){'\n'}🚄 Makkah → Madinah (Haramain train 2.5 ghante, 170–230 SAR){'\n'}🚌 Madinah → Jeddah wapas (train/bus, sham ki flight)</Text>
+        <Text style={styles.routeText}>✈️ Jeddah Airport → Makkah by car (75 min, 300 SAR){'\n'}🚄 Makkah → Madinah by Haramain train (2.5 hours, 170–230 SAR){'\n'}🚌 Madinah → Jeddah return (train/bus, evening flight)</Text>
       </View>
 
-      <Text style={styles.sectionTitle}>Airport se Sari Info</Text>
+      <Text style={styles.sectionTitle}>Airport Information</Text>
       {AIRPORT_INFO.map((a) => (
         <View key={a.title} style={styles.infoCard}>
           <Text style={styles.infoTitle}>{a.title}</Text>

@@ -38,7 +38,7 @@ export default function ChecklistScreen() {
       ))}
 
       <View style={styles.noteCard}>
-        <Text style={styles.noteText}>Tip: Checklist poori hone par bhi visa, hotel aur flight ki final confirmation booking se pehle dobara check karein.</Text>
+        <Text style={styles.noteText}>Tip: Even when the checklist is complete, re-check visa, hotel and flight confirmation before booking.</Text>
       </View>
     </ScrollView>
   );

@@ -39,13 +39,13 @@ export default function BudgetScreen() {
     <ScrollView style={styles.root} contentContainerStyle={{ paddingBottom: 32 }}>
       <View style={styles.header}>
         <Text style={styles.title}>Budget Calculator</Text>
-        <Text style={styles.sub}>Apne numbers badlein — total khud update ho jayega</Text>
+        <Text style={styles.sub}>Change your numbers — the total updates automatically</Text>
       </View>
 
       <View style={styles.totalCard}>
-        <Text style={styles.totalLabel}>TOTAL ANDAZA — FAMILY OF 4</Text>
+        <Text style={styles.totalLabel}>ESTIMATED TOTAL — FAMILY OF 4</Text>
         <Text style={styles.totalValue}>PKR {total.toLocaleString('en-PK')}</Text>
-        <Text style={styles.totalSub}>≈ ${(total / USD_TO_PKR).toLocaleString('en-US')} • Rate andaza: 1 USD = 280 PKR, 1 SAR = 75 PKR</Text>
+        <Text style={styles.totalSub}>≈ ${(total / USD_TO_PKR).toLocaleString('en-US')} • Estimated rates: 1 USD = 280 PKR, 1 SAR = 75 PKR</Text>
       </View>
 
       <Field label="Flights — total family (USD)" value={flightUsd} onChange={setFlightUsd} suffix="USD" />
@@ -53,7 +53,7 @@ export default function BudgetScreen() {
       <Field label="Makkah hotel — per night (SAR, 4 nights)" value={makkahNight} onChange={setMakkahNight} suffix="SAR" />
       <Field label="Madinah hotel — per night (SAR, 3 nights)" value={madinahNight} onChange={setMadinahNight} suffix="SAR" />
       <Field label="Transport — total (SAR)" value={transportSar} onChange={setTransportSar} suffix="SAR" />
-      <Field label="Khana — total 7 din (PKR)" value={foodPkr} onChange={setFoodPkr} suffix="PKR" />
+      <Field label="Food — total 7 days (PKR)" value={foodPkr} onChange={setFoodPkr} suffix="PKR" />
 
       <View style={styles.breakCard}>
         <Text style={styles.breakTitle}>Breakdown</Text>
@@ -61,8 +61,8 @@ export default function BudgetScreen() {
         <Text style={styles.breakLine}>🛂 Visa (4): PKR {visaTotal.toLocaleString('en-PK')}</Text>
         <Text style={styles.breakLine}>🏨 Hotels (7 nights): PKR {hotelPkr.toLocaleString('en-PK')}</Text>
         <Text style={styles.breakLine}>🚗 Transport: PKR {transportPkr.toLocaleString('en-PK')}</Text>
-        <Text style={styles.breakLine}>🍽️ Khana: PKR {foodPkr.toLocaleString('en-PK')}</Text>
-        <Text style={styles.note}>Ye andaza hai, final price booking ke waqt confirm karein. Bachon ke visa/hotel charges agent/hotel se pooch lein.</Text>
+        <Text style={styles.breakLine}>🍽️ Food: PKR {foodPkr.toLocaleString('en-PK')}</Text>
+        <Text style={styles.note}>This is an estimate. Confirm the final price at booking. Ask your agent/hotel about visa/hotel charges for children.</Text>
       </View>
     </ScrollView>
   );

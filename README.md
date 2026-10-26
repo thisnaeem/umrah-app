@@ -1,25 +1,29 @@
 # Umrah Guide — React Native (Expo) — Play Store App
 
-Ek hi code se **Android aur iPhone** dono par chalne wali public Umrah service app. Ye kisi ek trip ka planner nahi hai — ye Umrah ki service dene ke liye bani hai.
+One codebase for **Android and iPhone**. A public Umrah service app — not a single personal trip planner.
 
-## Kya hai is me
+## What is in it
 
-- **Home:** Services, duas, live guide, sathi, 3D map aur seekhein ke quick actions, packages aur aaj ki dua
-- **Services:** Umrah packages (Economy / Standard / Family / Premium), visa, flights, hotels, transport, personal guide, ziyarat tours — filter ke saath, details ke saath
-- **Duas:** Search + category filter, Arabic + Roman Urdu transliteration + meaning, favourite
-- **Live Guide:** Umrah ke doran step-by-step tracker — Ihram, Tawaf, Sai, Halq, Madinah — har step ka checklist aur progress, emergency tips
-- **Sathi Finder:** Sheher / date / language ke hisab se fellow travellers groups dhoondhein, join request, apna group banayein (demo data, neeche note dekhein)
-- **3D Map:** Makkah aur Madinah ka isometric 3D map — zoom, day/night, filter (Hotel / Masjid / Airport / Ziyarat), pin par tap kar ke details, price, distance, aur Jeddah → Makkah → Madinah route
-- **Seekhein:** Umrah steps, airport guide, bachon ke saath tips
-- **Budget / Checklist:** Purane trip planner screens bhi maujood hain (Home se nahi, direct route se)
+- **Home (redesigned):** Welcome + search, next prayer card, quick actions, featured packages, Dua of the Day, family safety card
+- **Services:** Umrah packages (Economy / Standard / Family / Premium), visa, flights, hotels, transport, personal guide, Ziyarat tours — with filters and details
+- **Duas:** Search + category filter, Arabic + transliteration + English meaning, favourites
+- **Live Guide:** Step-by-step Umrah tracker — Ihram, Tawaf, Sa'i, Halq, Madinah — with checklists and progress
+- **Companions (Sathi):** Find fellow traveller groups by city / date / language, join requests, create a group
+- **3D Map:** Makkah and Madinah isometric 3D map — zoom, day/night, filters (Hotel / Masjid / Airport / Ziyarat), tap a pin for details, price, distance, and Jeddah → Makkah → Madinah route. **Navigation fix:** the app now uses a Stack + Tabs layout, so Map, Learn, Budget and Checklist open reliably. The old hidden-tab (`href: null`) layout was why Map did not open.
+- **Live Location Sharing (professional):** Share your position only with your group, with a time limit (1h / 4h / end of day, auto-stop), a live group map, an agreed meeting point, and a one-tap **SOS — I Am Lost** button that highlights you to companions. Privacy controls are built in.
+- **Notifications:** Prayer reminders, SOS alerts, location-sharing expiry, group join requests, Rawdah reminders and package offers — each can be toggled in the Notifications screen. Local notifications use `expo-notifications`; server notifications are stored in Postgres.
+- **Prayer Times, Qibla Compass, Digital Tasbih, Ziyarat Places, Currency Converter, Emergency & Help:** the tools top Umrah apps offer, all in English
+- **Learn, Budget, Checklist:** Umrah learning, budget calculator and packing/document checklist
+- **Authentication:** Proper account creation and sign-in, backed by Prisma + Postgres (see `backend/`)
 
 ## UX / Icons / Fonts
 
-- **Hugeicons:** `@hugeicons/react-native` + `@hugeicons/core-free-icons` (free). Important: icons ko package index se import nahi kiya gaya, `src/icons.js` me direct per-icon files import ki gayi hain — warna Metro 6000+ files khol kar EMFILE error deta hai.
+- **Hugeicons — bottom navigation only.** Tabs use Hugeicons (direct per-icon imports in `src/icons.js`, without a `.js` suffix — the package exports map already adds it, otherwise Metro warns about `Home01Icon.js.js`). Everywhere else the app uses plain text / emoji, as requested.
 - **Font:** Poppins (Regular / Medium / SemiBold / Bold)
-- **Theme:** Deep green + gold + cream, rounded cards, bottom tabs (Expo Router)
+- **Theme:** Deep green + gold + cream, rounded cards
+- **Language:** English throughout the app UI.
 
-## Chalayein — Expo Go
+## Run — Expo Go
 
 ```bash
 cd umrah-trip-planner
@@ -27,47 +31,59 @@ npm install
 npx expo start
 ```
 
-Phone me Expo Go se QR scan karein.
+Scan the QR code with Expo Go on your phone.
 
-## Play Store par upload (Android)
+## Backend — Prisma + Postgres
 
-1. App name, package aur version `app.json` me set hain:
-   - name: `Umrah Guide`
-   - android package: `com.thisnaeem.umrahguide` — pehli upload ke baad ye change nahi hota, is liye pehle confirm kar lein
-   - iOS bundle: `com.thisnaeem.umrahguide`
+```bash
+cd backend
+docker compose up -d        # Postgres
+npm install
+npx prisma migrate dev --name init
+npm run dev                 # http://localhost:4000
+```
+
+API: `POST /auth/register`, `POST /auth/login`, `GET /me`, `POST /location/share`, `GET /location/group/:groupId`, `POST /location/stop`, `GET /notifications`, `POST /notifications`. Passwords are hashed with bcrypt, auth uses JWT. Full details in `backend/README.md`.
+
+For a real phone, set `EXPO_PUBLIC_API_URL` to your computer's LAN IP, e.g. `EXPO_PUBLIC_API_URL=http://192.168.0.105:4000 npx expo start`. Without a backend, use **Continue as Guest** in the app.
+
+## Play Store (Android)
+
+1. In `app.json`: name `Umrah Guide`, android package `com.thisnaeem.umrahguide` — this cannot change after the first upload, so confirm it first. iOS bundle: `com.thisnaeem.umrahguide`.
 2. EAS build:
 ```bash
 npx eas-cli@latest login
 npx eas-cli@latest build --platform android --profile production
 ```
-3. Play Console me app banayein, AAB upload karein, store listing, screenshots, privacy policy URL aur content rating poori karein, phir review ke liye submit karein.
+3. In Play Console, create the app, upload the AAB, complete store listing, screenshots, privacy policy URL and content rating, then submit for review.
 
-## Honest notes — Play Store se pehle ye zaroori hain
+## Honest notes — before Play Store
 
-- **Packages / Services listings hain, live booking / payment nahi:** Booking ya payment lene se pehle provider / payment integration chahiye hogi.
-- **Sathi Finder demo data hai:** Live matching, chat aur verification ke liye backend (auth, database, moderation) chahiye hoga. Private phone numbers app me share nahi hote.
-- **Map native Google Maps nahi hai:** Ye custom isometric 3D map hai, taake bina Google API key ke Expo Go aur EAS dono me chale. Real Google Maps 3D chahiye to `react-native-maps` + API key + development build add karna hoga.
-- **Prices andaza hain:** Final price booking par confirm karein.
+- **Packages / Services are listings, not live booking/payment:** provider / payment integration is still needed before taking bookings.
+- **Companions groups are demo data in the app:** live matching uses the backend groups API; chat and verification are not yet built.
+- **Map is not native Google Maps:** it is a custom isometric 3D map, so it works in Expo Go and EAS without an API key. Real Google Maps 3D needs `react-native-maps` + API key + a development build.
+- **Prices are estimates:** confirm final prices at booking.
+- **Location sharing in the app works offline with demo group members + your real GPS:** the backend endpoints are ready for live group sync once the backend is deployed.
 
 ## npm install fix (26 Oct 2026)
 
-`react` ko `19.3.1` par rakha gaya hai, kyunke `react-dom@19.3.1` ko `react@^19.3.1` chahiye tha aur `19.3.0` par `npm install` ERESOLVE error deta tha. `expo-doctor` is par 1 cosmetic warning dikhata hai (expected 19.3.0, found 19.3.1), lekin Android/iOS bundle ban jate hain.
+`react` is pinned to `19.3.1` because `react-dom@19.3.1` requires `react@^19.3.1` and `19.3.0` gave an ERESOLVE error on `npm install`. `expo-doctor` shows 1 cosmetic warning for this, but Android/iOS bundles build fine.
 
 ## Project structure
 
 ```
-src/app/_layout.js      # Expo Router tabs + Poppins + Hugeicons tabs
-src/app/index.js        # Home
-src/app/services.js     # Packages + services
-src/app/duas.js         # Duas
-src/app/guide.js        # Live Umrah guide tracker
-src/app/sathi.js        # Sathi finder
-src/app/map.js          # Isometric 3D map
-src/app/learn.js        # Learning
-src/app/budget.js       # Budget calculator
-src/app/checklist.js    # Checklist
-src/icons.js            # Hugeicons direct imports (EMFILE fix)
-src/serviceData.js      # Packages, services, duas, guide, sathi, places
-src/data.js             # Itinerary, airport info, learning (legacy)
-src/theme.js            # Colors + fonts
+src/app/_layout.js        # Stack root + AuthProvider + notification permission
+src/app/(tabs)/_layout.js # Bottom tabs (Hugeicons only here)
+src/app/(tabs)/index.js   # Home
+src/app/(tabs)/services.js, duas.js, guide.js, sathi.js, map.js
+src/app/learn.js, budget.js, checklist.js
+src/app/prayer.js, qibla.js, tasbih.js, ziyarat.js, currency.js, emergency.js
+src/app/location.js       # Live location sharing + SOS
+src/app/notifications.js  # Notification preferences
+src/app/auth.js           # Sign in / create account
+src/context/AuthContext.js
+src/notifications.js      # expo-notifications helpers
+src/icons.js              # Hugeicons direct imports (EMFILE fix, no .js suffix)
+src/serviceData.js        # Packages, services, duas, guide, groups, places, prayer times, Ziyarat
+backend/                  # Express + Prisma + Postgres
 ```

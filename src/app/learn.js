@@ -9,8 +9,8 @@ export default function LearnScreen() {
   return (
     <ScrollView style={styles.root} contentContainerStyle={{ paddingBottom: 32 }}>
       <View style={styles.header}>
-        <Text style={styles.title}>Seekhein — Umrah Guide</Text>
-        <Text style={styles.sub}>Pehli dafa ja rahe hain? Har step aasan lafzon me.</Text>
+        <Text style={styles.title}>Learn — Umrah Guide</Text>
+        <Text style={styles.sub}>First time going? Every step in simple words.</Text>
       </View>
 
       {LEARNING_STEPS.map((s, i) => {
@@ -19,12 +19,12 @@ export default function LearnScreen() {
           <TouchableOpacity key={s.title} onPress={() => setOpen(isOpen ? -1 : i)} style={styles.card}>
             <Text style={styles.cardTitle}>{s.title}</Text>
             {isOpen && <Text style={styles.cardText}>{s.detail}</Text>}
-            <Text style={styles.more}>{isOpen ? '▲ Band karein' : '▼ Kholein'}</Text>
+            <Text style={styles.more}>{isOpen ? '▲ Close' : '▼ Open'}</Text>
           </TouchableOpacity>
         );
       })}
 
-      <Text style={styles.sectionTitle}>Airport aur Safar Guide</Text>
+      <Text style={styles.sectionTitle}>Airport & Travel Guide</Text>
       {AIRPORT_INFO.map((a) => (
         <View key={a.title} style={styles.infoCard}>
           <Text style={styles.infoTitle}>{a.title}</Text>
@@ -33,8 +33,8 @@ export default function LearnScreen() {
       ))}
 
       <View style={styles.kidsCard}>
-        <Text style={styles.kidsTitle}>👶 Bachon ke saath Seekhna</Text>
-        <Text style={styles.kidsText}>• Stroller Haram me le ja sakte hain, lekin rush me ahtiyat karein.{'\n'}• Bachon ko paani, snacks aur extra kapre saath rakhein.{'\n'}• Tawaf/Sai me breaks lein — jaldi karne ki zaroorat nahi.{'\n'}• Madinah me Rawdah ke liye bachon ka bhi khayal rakhein, slot pehle book karein.</Text>
+        <Text style={styles.kidsTitle}>👶 With Children</Text>
+        <Text style={styles.kidsText}>• You can take a stroller into the Haram, but be careful in crowds.{'\n'}• Keep water, snacks and extra clothes for children with you.{'\n'}• Take breaks during Tawaf/Sa'i — there is no need to rush.{'\n'}• In Madinah, book the Rawdah slot early and plan for children.</Text>
       </View>
     </ScrollView>
   );

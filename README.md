@@ -1,22 +1,25 @@
-# Umrah Trip Planner — React Native (Expo)
+# Umrah Guide — React Native (Expo) — Play Store App
 
-Ek hi code se **Android aur iPhone** dono par chalne wali app.
+Ek hi code se **Android aur iPhone** dono par chalne wali public Umrah service app. Ye kisi ek trip ka planner nahi hai — ye Umrah ki service dene ke liye bani hai.
 
-## Kya hai is me — sab kuch
+## Kya hai is me
 
-- **Plan tab:** Lahore → Jeddah trip, family of 4, flight options (PIA Nov 19 recommended, Gulf Air Dec, Emirates Madinah), 7 nights ka itinerary (Makkah 4 + Madinah 3, wapas Day 8)
-- **3D Map tab:** Makkah aur Madinah ka 3D-style interactive map. Hotel/masjid/airport pin par tap karein to details, price aur Haram se distance nazar aata hai. Hotel list se bhi select kar sakte hain.
-  - Note: Ye map React Native views se bana stylized 3D-style map hai, taake Expo Go me dono phones par baghair dev build ke chale. Native Google Maps 3D buildings chahiye to baad me `react-native-maps` + development build add karna hoga.
-- **Budget tab:** Calculator — flights, visa, hotel, transport, khana badlein, total PKR/USD khud update hota hai. Default rates andaza hain (1 USD = 280 PKR, 1 SAR = 75 PKR), final price booking par confirm karein.
-- **Seekhein tab:** Umrah steps (Ihram, Tawaf, Sai, Tahallul, Rawdah), airport se safar guide, bachon ke saath tips.
-- **Checklist tab:** Documents, health/Nusuk, packing — tick karein, progress % dekhein.
+- **Home:** Services, duas, live guide, sathi, 3D map aur seekhein ke quick actions, packages aur aaj ki dua
+- **Services:** Umrah packages (Economy / Standard / Family / Premium), visa, flights, hotels, transport, personal guide, ziyarat tours — filter ke saath, details ke saath
+- **Duas:** Search + category filter, Arabic + Roman Urdu transliteration + meaning, favourite
+- **Live Guide:** Umrah ke doran step-by-step tracker — Ihram, Tawaf, Sai, Halq, Madinah — har step ka checklist aur progress, emergency tips
+- **Sathi Finder:** Sheher / date / language ke hisab se fellow travellers groups dhoondhein, join request, apna group banayein (demo data, neeche note dekhein)
+- **3D Map:** Makkah aur Madinah ka isometric 3D map — zoom, day/night, filter (Hotel / Masjid / Airport / Ziyarat), pin par tap kar ke details, price, distance, aur Jeddah → Makkah → Madinah route
+- **Seekhein:** Umrah steps, airport guide, bachon ke saath tips
+- **Budget / Checklist:** Purane trip planner screens bhi maujood hain (Home se nahi, direct route se)
 
-## UI / UX
+## UX / Icons / Fonts
 
-- Modern font: **Poppins** (Regular / Medium / SemiBold / Bold) via `@expo-google-fonts/poppins`
-- Cool theme: deep green + gold + cream, gradient hero, rounded cards, bottom tabs (Expo Router)
+- **Hugeicons:** `@hugeicons/react-native` + `@hugeicons/core-free-icons` (free). Important: icons ko package index se import nahi kiya gaya, `src/icons.js` me direct per-icon files import ki gayi hain — warna Metro 6000+ files khol kar EMFILE error deta hai.
+- **Font:** Poppins (Regular / Medium / SemiBold / Bold)
+- **Theme:** Deep green + gold + cream, rounded cards, bottom tabs (Expo Router)
 
-## Chalayein — Android + iPhone (Expo Go, sab se easy)
+## Chalayein — Expo Go
 
 ```bash
 cd umrah-trip-planner
@@ -24,39 +27,47 @@ npm install
 npx expo start
 ```
 
-Phir phone me **Expo Go** app kholein aur QR code scan karein. Android aur iPhone dono isi tarah chalenge.
+Phone me Expo Go se QR scan karein.
 
-## Store ke liye build (EAS)
+## Play Store par upload (Android)
 
+1. App name, package aur version `app.json` me set hain:
+   - name: `Umrah Guide`
+   - android package: `com.thisnaeem.umrahguide` — pehli upload ke baad ye change nahi hota, is liye pehle confirm kar lein
+   - iOS bundle: `com.thisnaeem.umrahguide`
+2. EAS build:
 ```bash
 npx eas-cli@latest login
-npx eas-cli@latest build --platform android
-npx eas-cli@latest build --platform ios
+npx eas-cli@latest build --platform android --profile production
 ```
+3. Play Console me app banayein, AAB upload karein, store listing, screenshots, privacy policy URL aur content rating poori karein, phir review ke liye submit karein.
 
-iOS build ke liye Apple Developer account chahiye, Android ke liye Play Console.
+## Honest notes — Play Store se pehle ye zaroori hain
+
+- **Packages / Services listings hain, live booking / payment nahi:** Booking ya payment lene se pehle provider / payment integration chahiye hogi.
+- **Sathi Finder demo data hai:** Live matching, chat aur verification ke liye backend (auth, database, moderation) chahiye hoga. Private phone numbers app me share nahi hote.
+- **Map native Google Maps nahi hai:** Ye custom isometric 3D map hai, taake bina Google API key ke Expo Go aur EAS dono me chale. Real Google Maps 3D chahiye to `react-native-maps` + API key + development build add karna hoga.
+- **Prices andaza hain:** Final price booking par confirm karein.
+
+## npm install fix (26 Oct 2026)
+
+`react` ko `19.3.1` par rakha gaya hai, kyunke `react-dom@19.3.1` ko `react@^19.3.1` chahiye tha aur `19.3.0` par `npm install` ERESOLVE error deta tha. `expo-doctor` is par 1 cosmetic warning dikhata hai (expected 19.3.0, found 19.3.1), lekin Android/iOS bundle ban jate hain.
 
 ## Project structure
 
 ```
-src/app/_layout.js      # Expo Router tabs + Poppins fonts
-src/app/index.js        # Plan + itinerary + flights
-src/app/map.js          # 3D-style Makkah/Madinah map + airport info
+src/app/_layout.js      # Expo Router tabs + Poppins + Hugeicons tabs
+src/app/index.js        # Home
+src/app/services.js     # Packages + services
+src/app/duas.js         # Duas
+src/app/guide.js        # Live Umrah guide tracker
+src/app/sathi.js        # Sathi finder
+src/app/map.js          # Isometric 3D map
+src/app/learn.js        # Learning
 src/app/budget.js       # Budget calculator
-src/app/learn.js        # Umrah learning guide
-src/app/checklist.js    # Checklist with progress
-src/data.js             # Flights, hotels, itinerary, transport, learning data
+src/app/checklist.js    # Checklist
+src/icons.js            # Hugeicons direct imports (EMFILE fix)
+src/serviceData.js      # Packages, services, duas, guide, sathi, places
+src/data.js             # Itinerary, airport info, learning (legacy)
 src/theme.js            # Colors + fonts
 ```
-
-## npm install fix (26 Oct 2026)
-
-`react` ko `19.3.1` par rakha gaya hai, kyunke `react-dom@19.3.1` ko `react@^19.3.1` chahiye tha aur `19.3.0` par `npm install` ERESOLVE error deta tha. Is fix ke baad clean `npm install` baghair `--legacy-peer-deps` ke chal gaya. Note: `expo-doctor` is par 1 cosmetic warning dikhata hai (expected 19.3.0, found 19.3.1), lekin Android/iOS bundle ban jate hain.
-
-## Verification (is machine par kiya gaya)
-
-- `npx expo-doctor` — 20/20 checks passed
-- `npx expo export --platform android` — bundle bana (1184 modules)
-- `npx expo export --platform ios` — bundle bana
-
-Prices/flights 26 Oct 2026 ki research par based hain aur change ho sakte hain — booking se pehle dobara confirm karein.

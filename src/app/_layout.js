@@ -6,9 +6,7 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
-import { useEffect } from 'react';
 import { AuthProvider } from '../context/AuthContext';
-import { requestNotificationPermission } from '../notifications';
 import { colors, fonts } from '../theme';
 
 export default function RootLayout() {
@@ -19,12 +17,9 @@ export default function RootLayout() {
     Poppins_700Bold,
   });
 
-  useEffect(() => {
-    // Ask once for notification permission; user can change it in the
-    // Notifications screen. This never blocks the app if declined.
-    requestNotificationPermission().catch(() => {});
-  }, []);
-
+  // NOTE: Do NOT request notification permission at startup. Permission is
+  // requested only from the Notifications screen, after the user taps
+  // "Allow Notifications". This keeps Expo Go startup crash-free.
   if (!loaded) {
     return null;
   }

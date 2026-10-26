@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors, fonts } from '../../theme';
-import { PLACES_V2, AIRPORT_INFO } from '../../data';
+import { PLACES_V2 } from '../../serviceData';
+import { AIRPORT_INFO } from '../../data';
 
 function Cube({ x, y, w, h, color, topColor }) {
   return (
@@ -18,13 +19,14 @@ export default function MapScreen() {
   const [filter, setFilter] = useState('All');
   const [zoom, setZoom] = useState(1);
   const [night, setNight] = useState(false);
-  const places = PLACES_V2.filter((p) => p.city === city && (filter === 'All' || p.type === filter));
-  const allCity = PLACES_V2.filter((p) => p.city === city);
+  const allPlaces = PLACES_V2 || [];
+  const places = allPlaces.filter((p) => p.city === city && (filter === 'All' || p.type === filter));
+  const allCity = allPlaces.filter((p) => p.city === city);
   const [selected, setSelected] = useState(allCity[0]);
 
   const onCity = (c) => {
     setCity(c);
-    const first = PLACES_V2.find((p) => p.city === c);
+    const first = allPlaces.find((p) => p.city === c);
     setSelected(first);
     setFilter('All');
   };
